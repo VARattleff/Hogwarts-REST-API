@@ -37,9 +37,7 @@ public class House {
     }
 
     public void setName(String name) {
-        if (name != null) {
-            this.name = name;
-        }
+        this.name = name;
     }
 
     public String getFounder() {
@@ -47,9 +45,7 @@ public class House {
     }
 
     public void setFounder(String founder) {
-        if (founder != null) {
-            this.founder = founder;
-        }
+        this.founder = founder;
     }
 
     public List<String> getColors() {
