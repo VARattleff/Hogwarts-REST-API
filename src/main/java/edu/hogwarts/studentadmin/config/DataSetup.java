@@ -1,9 +1,12 @@
 package edu.hogwarts.studentadmin.config;
 
-import edu.hogwarts.studentadmin.modals.House;
-import edu.hogwarts.studentadmin.modals.Student;
+import edu.hogwarts.studentadmin.models.EmpType;
+import edu.hogwarts.studentadmin.models.House;
+import edu.hogwarts.studentadmin.models.Student;
+import edu.hogwarts.studentadmin.models.Teacher;
 import edu.hogwarts.studentadmin.repository.HouseRepository;
 import edu.hogwarts.studentadmin.repository.StudentRepository;
+import edu.hogwarts.studentadmin.repository.TeacherRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Controller;
@@ -16,17 +19,19 @@ import java.util.Arrays;
 public class DataSetup implements ApplicationRunner {
     private final StudentRepository studentRepository;
     private final HouseRepository houseRepository;
+    private final TeacherRepository teacherRepository;
 
-
-    public DataSetup(HouseRepository houseRepository, StudentRepository studentRepository) {
+    public DataSetup(HouseRepository houseRepository, StudentRepository studentRepository, TeacherRepository teacherRepository) {
         this.houseRepository = houseRepository;
         this.studentRepository = studentRepository;
+        this.teacherRepository = teacherRepository;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         generateHouses();
         generateStudents();
+        generetaTeacher();
 
     }
 
@@ -84,5 +89,25 @@ public class DataSetup implements ApplicationRunner {
         studentRepository.saveAll(Arrays.asList(students));
     }
 
+        public void generetaTeacher(){
+            var gryffindor = houseRepository.findById(1L);
+            var hufflepuff = houseRepository.findById(2L);
+            var ravenclaw = houseRepository.findById(3L);
+            var slytherin = houseRepository.findById(4L);
+            if (gryffindor.isEmpty() || hufflepuff.isEmpty() || ravenclaw.isEmpty() || slytherin.isEmpty()) {
+                return;
+            }
+            var mcGonagall = new Teacher(1L, "Minerva", "", "McGonagall", LocalDate.of(1935, 10, 4), gryffindor.get(), true, EmpType.TENURED, LocalDate.of(1956, 9, 1), null);
+            var snape = new Teacher(2L, "Severus", "", "Snape", LocalDate.of(1960, 1, 9), slytherin.get(), true, EmpType.TENURED, LocalDate.of(1981, 9, 1), LocalDate.of(1998, 6, 30));
+            var sprout = new Teacher(3L, "Pomona", "", "Sprout", LocalDate.of(1931, 5, 15), hufflepuff.get(), true, EmpType.TENURED, LocalDate.of(1952, 9, 1), null);
+            var flitwick = new Teacher(4L, "Filius", "", "Flitwick", LocalDate.of(1930, 10, 17), ravenclaw.get(), true, EmpType.TENURED, LocalDate.of(1951, 9, 1), null);
+            var hagrid = new Teacher(5L, "Rubeus", "", "Hagrid", LocalDate.of(1928, 12, 6), gryffindor.get(), false, EmpType.TENURED, LocalDate.of(1968, 9, 1), LocalDate.of(1998, 6, 30));
+            var trelawney = new Teacher(6L, "Sybill", "", "Trelawney", LocalDate.of(1963, 3, 9), ravenclaw.get(), false, EmpType.TENURED, LocalDate.of(1993, 9, 1), null);
+            var binns = new Teacher(7L, "Cuthbert", "", "Binns", LocalDate.of(1865, 1, 1), null, false, EmpType.TENURED, LocalDate.of(1886, 9, 1), LocalDate.of(1986, 6, 30));
+            var quirrell = new Teacher(8L, "Quirinus", "", "Quirrell", LocalDate.of(1968, 9, 26), ravenclaw.get(), false, EmpType.TEMPORARY, LocalDate.of(1991, 9, 1), LocalDate.of(1992, 6, 30));
+
+            var teachers = new Teacher[]{mcGonagall, snape, sprout, flitwick, hagrid, trelawney, binns, quirrell};
+            teacherRepository.saveAll(Arrays.asList(teachers));
+        }
 
 }

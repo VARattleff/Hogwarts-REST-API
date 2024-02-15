@@ -1,6 +1,6 @@
 package edu.hogwarts.studentadmin.controller;
 
-import edu.hogwarts.studentadmin.modals.Student;
+import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.repository.StudentRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

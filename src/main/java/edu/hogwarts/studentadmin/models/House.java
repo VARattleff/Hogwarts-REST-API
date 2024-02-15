@@ -1,4 +1,4 @@
-package edu.hogwarts.studentadmin.modals;
+package edu.hogwarts.studentadmin.models;
 
 import jakarta.persistence.*;
 
