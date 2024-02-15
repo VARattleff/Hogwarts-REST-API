@@ -32,6 +32,7 @@ public class DataSetup implements ApplicationRunner {
         generateHouses();
         generateStudents();
         generetaTeacher();
+        generateCourse();
 
     }
 
@@ -108,6 +109,10 @@ public class DataSetup implements ApplicationRunner {
 
             var teachers = new Teacher[]{mcGonagall, snape, sprout, flitwick, hagrid, trelawney, binns, quirrell};
             teacherRepository.saveAll(Arrays.asList(teachers));
+        }
+
+        public void generateCourse(){
+
         }
 
 }
