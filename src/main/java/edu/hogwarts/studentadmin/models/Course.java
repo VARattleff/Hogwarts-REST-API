@@ -1,8 +1,8 @@
 package edu.hogwarts.studentadmin.models;
 
 import jakarta.persistence.*;
-
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "course")
 public class Course {
@@ -12,14 +12,14 @@ public class Course {
     private String subject;
     private int schoolYear;
     private boolean current;
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Teacher teacher;
-    @ManyToOne
-    private Student[] students;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Student> students = new ArrayList<>();
 
     public Course(){}
 
-    public Course(long id, String subject, int schoolYear, boolean current, Teacher teacher, Student[] students) {
+    public Course(long id, String subject, int schoolYear, boolean current, Teacher teacher, List<Student>  students) {
         this.id = id;
         this.subject = subject;
         this.schoolYear = schoolYear;
@@ -68,11 +68,11 @@ public class Course {
         this.teacher = teacher;
     }
 
-    public Student[] getStudents() {
+    public List<Student> getStudents() {
         return students;
     }
 
-    public void setStudents(Student[] students) {
+    public void setStudents(List<Student> students) {
         this.students = students;
     }
 
@@ -84,7 +84,7 @@ public class Course {
                 ", schoolYear=" + schoolYear +
                 ", current=" + current +
                 ", teacher=" + teacher +
-                ", students=" + Arrays.toString(students) +
+                ", students=" + students +
                 '}';
     }
 }

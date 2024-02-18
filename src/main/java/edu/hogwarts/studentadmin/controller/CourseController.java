@@ -9,7 +9,6 @@ import edu.hogwarts.studentadmin.repository.TeacherRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,21 +92,22 @@ public class CourseController {
         return ResponseEntity.ok(teacher);
     }
 
+
     @GetMapping("/{id}/students")
     public ResponseEntity<List<Student>> getStudents(@PathVariable long id) {
-        Optional<Course> courseOptional = this.courseRepository.findById(id);
+        Optional<Course> courseOptional = courseRepository.findById(id);
         if (courseOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         Course course = courseOptional.get();
-        Student[] students = course.getStudents();
+        List<Student> students = course.getStudents();
 
-        if (students == null || students.length == 0) {
+        if (students == null || students.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(Arrays.asList(students));
+        return ResponseEntity.ok(students);
     }
 
     @PutMapping("/{id}/teacher/{teacherId}")
@@ -132,7 +132,6 @@ public class CourseController {
 
     @PutMapping("/{id}/students/{studentId}")
     public ResponseEntity<Course> addStudentToCourse(@PathVariable long id, @PathVariable long studentId) {
-
         Course course = courseRepository.findById(id).orElse(null);
         if (course == null) {
             return ResponseEntity.notFound().build();
@@ -143,13 +142,11 @@ public class CourseController {
             return ResponseEntity.notFound().build();
         }
 
-        Student[] students = course.getStudents();
+        List<Student> students = course.getStudents();
         if (students == null) {
-            students = new Student[]{student};
+            students = List.of(student);
         } else {
-            Student[] newStudents = Arrays.copyOf(students, students.length + 1);
-            newStudents[students.length] = student;
-            students = newStudents;
+            students.add(student);
         }
 
         course.setStudents(students);
@@ -179,22 +176,14 @@ public class CourseController {
             return ResponseEntity.notFound().build();
         }
 
-        Student[] students = course.getStudents();
+        List<Student> students = course.getStudents();
         if (students != null) {
-            for (int i = 0; i < students.length; i++) {
-                if (students[i].getId() == studentId) {
-                    students[i] = null;
-                    break;
-                }
-            }
-            course.setStudents(students);
+            students.removeIf(student -> student.getId() == studentId);
         }
 
+        course.setStudents(students);
         courseRepository.save(course);
 
         return ResponseEntity.ok(course);
     }
-
 }
-
-

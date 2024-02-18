@@ -1,9 +1,7 @@
 package edu.hogwarts.studentadmin.config;
 
-import edu.hogwarts.studentadmin.models.EmpType;
-import edu.hogwarts.studentadmin.models.House;
-import edu.hogwarts.studentadmin.models.Student;
-import edu.hogwarts.studentadmin.models.Teacher;
+import edu.hogwarts.studentadmin.models.*;
+import edu.hogwarts.studentadmin.repository.CourseRepository;
 import edu.hogwarts.studentadmin.repository.HouseRepository;
 import edu.hogwarts.studentadmin.repository.StudentRepository;
 import edu.hogwarts.studentadmin.repository.TeacherRepository;
@@ -14,17 +12,20 @@ import org.springframework.stereotype.Controller;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class DataSetup implements ApplicationRunner {
     private final StudentRepository studentRepository;
     private final HouseRepository houseRepository;
     private final TeacherRepository teacherRepository;
+    private final CourseRepository courseRepository;
 
-    public DataSetup(HouseRepository houseRepository, StudentRepository studentRepository, TeacherRepository teacherRepository) {
+    public DataSetup(HouseRepository houseRepository, StudentRepository studentRepository, TeacherRepository teacherRepository, CourseRepository courseRepository) {
         this.houseRepository = houseRepository;
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
+        this.courseRepository = courseRepository;
     }
 
     @Override
@@ -112,7 +113,46 @@ public class DataSetup implements ApplicationRunner {
         }
 
         public void generateCourse(){
+            var gryffindor = houseRepository.findById(1L);
+            var hufflepuff = houseRepository.findById(2L);
+            var ravenclaw = houseRepository.findById(3L);
+            var slytherin = houseRepository.findById(4L);
 
+            if (gryffindor.isEmpty() || hufflepuff.isEmpty() || ravenclaw.isEmpty() || slytherin.isEmpty()) {
+                return;
+            }
+
+            var mcGonagall = new Teacher(1L, "Minerva", "", "McGonagall", LocalDate.of(1935, 10, 4), gryffindor.get(), true, EmpType.TENURED, LocalDate.of(1956, 9, 1), null);
+
+            var harry = new Student(1L, "Harry", "James", "Potter", LocalDate.of(1980, 7, 31), gryffindor.get(), false, 1991, 1998, true);
+            var hermione = new Student(2L, "Hermione", "Jean", "Granger", LocalDate.of(1979, 9, 19), gryffindor.get(), true, 1991, 1998, true);
+            var ron = new Student(3L, "Ronald", "Bilius", "Weasley", LocalDate.of(1980, 3, 1), gryffindor.get(), false, 1991, 1998, true);
+            var neville = new Student(4L, "Neville", "Frank", "Longbottom", LocalDate.of(1980, 7, 30), gryffindor.get(), false, 1991, 1998, true);
+            var luna = new Student(5L, "Luna", "", "Lovegood", LocalDate.of(1981, 2, 13), ravenclaw.get(), false, 1992, 1999, true);
+            var draco = new Student(6L, "Draco", "Lucius", "Malfoy", LocalDate.of(1980, 6, 5), slytherin.get(), false, 1991, 1998, true);
+            var cedric = new Student(7L, "Cedric", "", "Diggory", LocalDate.of(1977, 9, 1), hufflepuff.get(), true, 1993, 1995, true);
+            var cho = new Student(8L, "Cho", "", "Chang", LocalDate.of(1979, 9, 14), ravenclaw.get(), false, 1992, 1999, true);
+            var ginny = new Student(9L, "Ginevra", "Molly", "Weasley", LocalDate.of(1981, 8, 11), gryffindor.get(), false, 1992, 1999, true);
+            var seamus = new Student(10L, "Seamus", "", "Finnigan", LocalDate.of(1980, 3, 1), gryffindor.get(), false, 1991, 1998, true);
+
+
+            teacherRepository.save(mcGonagall);
+
+            List<Student> students = new ArrayList<>();
+            students.add(harry);
+            students.add(hermione);
+            students.add(ron);
+            students.add(neville);
+            students.add(luna);
+            students.add(draco);
+            students.add(cedric);
+            students.add(cho);
+            students.add(ginny);
+            students.add(seamus);
+
+            Course course = new Course(1L, "Magical Studies", 2024, true, mcGonagall, students);
+
+            courseRepository.save(course);
         }
 
 }

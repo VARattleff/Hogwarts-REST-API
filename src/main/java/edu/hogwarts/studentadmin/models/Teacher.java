@@ -12,10 +12,9 @@ public class Teacher {
     private String middleName;
     private String lastName;
     private LocalDate dateOfBirth;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private House house;
     private boolean headOfHouse;
-
     @Enumerated(EnumType.STRING)
     private EmpType employment;
     private LocalDate employmentStart;
