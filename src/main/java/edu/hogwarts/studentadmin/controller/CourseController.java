@@ -37,10 +37,7 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<Course> get(@PathVariable long id) {
         var course = this.courseRepository.findById(id);
-        if(course.isPresent()) {
-            return ResponseEntity.ok(course.get());
-        }
-        return ResponseEntity.notFound().build();
+        return course.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
