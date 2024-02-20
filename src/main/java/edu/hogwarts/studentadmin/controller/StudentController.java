@@ -1,10 +1,10 @@
 package edu.hogwarts.studentadmin.controller;
 import edu.hogwarts.studentadmin.dto.StudentDTO;
+
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.repository.StudentRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class StudentController {
 
     private final StudentRepository studentRepository;
+
 
     public StudentController(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -48,15 +49,33 @@ public class StudentController {
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody Student student) {
         if (student.getFirstName() == null) {
-            return ResponseEntity.badRequest().body("First name is required.");
+            return ResponseEntity.badRequest().body("Name is required.");
         }
+
+        String fullName = student.getFirstName();
+        String[] nameParts = fullName.split(" ");
+        String firstName = nameParts[0];
+        String middleName = null;
+        if (nameParts.length > 2) {
+            StringBuilder middleNameBuilder = new StringBuilder();
+            for (int i = 1; i < nameParts.length - 1; i++) {
+                middleNameBuilder.append(nameParts[i]).append(" ");
+            }
+            middleName = middleNameBuilder.toString().trim();
+        }
+
+        String lastName = nameParts[nameParts.length - 1];
+
+        student.setFirstName(firstName);
+        student.setMiddleName(middleName);
+        student.setLastName(lastName);
+
         Student savedStudent = studentRepository.save(student);
-        return ResponseEntity.ok(new StudentDTO(
-                savedStudent.getFirstName(),
-                savedStudent.getMiddleName(),
-                savedStudent.getLastName(),
-                savedStudent.getHouse().getName()));
+
+        return ResponseEntity.ok(savedStudent);
     }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<StudentDTO> update(@RequestBody Student student, @PathVariable("id") Long id) {

@@ -13,8 +13,11 @@ public class House {
     @ElementCollection
     private List<String> colors = new ArrayList<>();
 
-    public House(){}
+    public House() {}
 
+    public House(String name) {
+        this.name = name;
+    }
 
     public House(String name, String founder, List<String> colors) {
         this.name = name;
