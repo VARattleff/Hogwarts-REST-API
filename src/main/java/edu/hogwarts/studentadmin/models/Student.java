@@ -131,6 +131,4 @@ public class Student {
                 ", graduated=" + graduated +
                 '}';
     }
-
-
 }
