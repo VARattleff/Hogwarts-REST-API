@@ -1,11 +1,12 @@
 package edu.hogwarts.studentadmin.controller;
-
+import edu.hogwarts.studentadmin.dto.StudentDTO;
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.repository.StudentRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/students")
@@ -18,33 +19,50 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Student>> getAll() {
+    public ResponseEntity<List<StudentDTO>> getAll() {
         var students = this.studentRepository.findAll();
         if (!students.isEmpty()) {
-            return ResponseEntity.ok(students);
+            List<StudentDTO> studentDTOs = students.stream()
+                    .map(student -> new StudentDTO(
+                            student.getFirstName(),
+                            student.getMiddleName(),
+                            student.getLastName(),
+                            student.getHouse().getName()))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(studentDTOs);
         }
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> get(@PathVariable Long id) {
+    public ResponseEntity<StudentDTO> get(@PathVariable Long id) {
         var student = this.studentRepository.findById(id);
-        return student.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return student.map(value -> ResponseEntity.ok(new StudentDTO(
+                        value.getFirstName(),
+                        value.getMiddleName(),
+                        value.getLastName(),
+                        value.getHouse().getName())))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody Student student) {
-        if(student.getFirstName() == null) {
+        if (student.getFirstName() == null) {
             return ResponseEntity.badRequest().body("First name is required.");
         }
-        return ResponseEntity.ok(studentRepository.save(student));
+        Student savedStudent = studentRepository.save(student);
+        return ResponseEntity.ok(new StudentDTO(
+                savedStudent.getFirstName(),
+                savedStudent.getMiddleName(),
+                savedStudent.getLastName(),
+                savedStudent.getHouse().getName()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Student> update(@RequestBody Student student, @PathVariable("id") Long id) {
+    public ResponseEntity<StudentDTO> update(@RequestBody Student student, @PathVariable("id") Long id) {
         var studentToUpdate = studentRepository.findById(id);
         if (studentToUpdate.isPresent()) {
-            var updatedStudent = studentToUpdate.get();
+            Student updatedStudent = studentToUpdate.get();
             updatedStudent.setFirstName(student.getFirstName());
             updatedStudent.setMiddleName(student.getMiddleName());
             updatedStudent.setLastName(student.getLastName());
@@ -55,17 +73,26 @@ public class StudentController {
             updatedStudent.setGraduated(student.isGraduated());
             updatedStudent.setHouse(student.getHouse());
             studentRepository.save(updatedStudent);
-            return ResponseEntity.ok(updatedStudent);
+            return ResponseEntity.ok(new StudentDTO(
+                    updatedStudent.getFirstName(),
+                    updatedStudent.getMiddleName(),
+                    updatedStudent.getLastName(),
+                    updatedStudent.getHouse().getName()));
         }
         return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Student> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<StudentDTO> delete(@PathVariable("id") Long id) {
         var studentToDelete = this.studentRepository.findById(id);
         if (studentToDelete.isPresent()) {
             this.studentRepository.delete(studentToDelete.get());
-            return ResponseEntity.ok(studentToDelete.get());
+            Student deletedStudent = studentToDelete.get();
+            return ResponseEntity.ok(new StudentDTO(
+                    deletedStudent.getFirstName(),
+                    deletedStudent.getMiddleName(),
+                    deletedStudent.getLastName(),
+                    deletedStudent.getHouse().getName()));
         }
         return ResponseEntity.notFound().build();
     }

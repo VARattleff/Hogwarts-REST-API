@@ -36,6 +36,19 @@ public class Student {
         this.graduated = graduated;
     }
 
+    public void setFullName(String fullName) {
+        String[] parts = fullName.split(" ");
+        if (parts.length > 0) {
+            this.firstName = parts[0];
+        }
+        if (parts.length > 1) {
+            this.middleName = parts[1];
+        }
+        if (parts.length > 2) {
+            this.lastName = parts[2];
+        }
+    }
+
     public String getFirstName() {
         return firstName;
     }

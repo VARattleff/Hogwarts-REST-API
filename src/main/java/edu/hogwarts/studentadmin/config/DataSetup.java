@@ -56,10 +56,10 @@ public class DataSetup implements ApplicationRunner {
         slytherinColors.add("Green");
         slytherinColors.add("Silver");
 
-        var gryffindor = new House("Gryffindor", "Godric Gryffindor", gryffindorColors);
-        var hufflepuff = new House("Hufflepuff", "Helga Hufflepuff", hufflepuffColors);
-        var ravenclaw = new House("Ravenclaw", "Rowena Ravenclaw", ravenclawColors);
-        var slytherin = new House("Slytherin", "Salazar Slytherin", slytherinColors);
+        var gryffindor = new House("gryffindor", "Godric Gryffindor", gryffindorColors);
+        var hufflepuff = new House("hufflepuff", "Helga Hufflepuff", hufflepuffColors);
+        var ravenclaw = new House("ravenclaw", "Rowena Ravenclaw", ravenclawColors);
+        var slytherin = new House("slytherin", "Salazar Slytherin", slytherinColors);
 
 
         houseRepository.save(gryffindor);
@@ -69,7 +69,7 @@ public class DataSetup implements ApplicationRunner {
     }
 
     private void generateStudents() {
-        var gryffindor = houseRepository.findById("Gryffindor").orElse(null);
+        var gryffindor = houseRepository.findById("gryffindor").orElse(null);
         var hufflepuff = houseRepository.findById("hufflepuff").orElse(null);
         var ravenclaw = houseRepository.findById("ravenclaw").orElse(null);
         var slytherin = houseRepository.findById("slytherin").orElse(null);
@@ -94,7 +94,7 @@ public class DataSetup implements ApplicationRunner {
     }
 
         public void generetaTeacher(){
-            var gryffindor = houseRepository.findById("Gryffindor");
+            var gryffindor = houseRepository.findById("gryffindor");
             var hufflepuff = houseRepository.findById("hufflepuff");
             var ravenclaw = houseRepository.findById("ravenclaw");
             var slytherin = houseRepository.findById("slytherin");
@@ -115,7 +115,7 @@ public class DataSetup implements ApplicationRunner {
         }
 
         public void generateCourse(){
-            var gryffindor = houseRepository.findById("Gryffindor");
+            var gryffindor = houseRepository.findById("gryffindor");
             var hufflepuff = houseRepository.findById("hufflepuff");
             var ravenclaw = houseRepository.findById("ravenclaw");
             var slytherin = houseRepository.findById("slytherin");
