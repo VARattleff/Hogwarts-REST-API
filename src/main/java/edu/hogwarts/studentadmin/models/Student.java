@@ -20,10 +20,11 @@ public class Student {
     private int enrollmentYear;
     private int graduationYear;
     private boolean graduated;
+    private SchoolYear schoolYear;
 
     public Student(){}
 
-    public Student(long id, String firstName, String middleName, String lastName, LocalDate dateOfBirth, House house, boolean prefect, int enrollmentYear, int graduationYear, boolean graduated) {
+    public Student(long id, String firstName, String middleName, String lastName, LocalDate dateOfBirth, House house, boolean prefect, int enrollmentYear, int graduationYear, boolean graduated, SchoolYear schoolYear) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -34,6 +35,7 @@ public class Student {
         this.enrollmentYear = enrollmentYear;
         this.graduationYear = graduationYear;
         this.graduated = graduated;
+        this.schoolYear = schoolYear;
     }
 
     public void setFullName(String fullName) {
@@ -47,6 +49,14 @@ public class Student {
         if (parts.length > 2) {
             this.lastName = parts[2];
         }
+    }
+
+    public SchoolYear getSchoolYear() {
+        return schoolYear;
+    }
+
+    public void setSchoolYear(SchoolYear schoolYear) {
+        this.schoolYear = schoolYear;
     }
 
     public String getFirstName() {

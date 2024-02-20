@@ -1,11 +1,13 @@
 package edu.hogwarts.studentadmin.controller;
 import edu.hogwarts.studentadmin.dto.StudentDTO;
 
+import edu.hogwarts.studentadmin.models.SchoolYear;
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.repository.StudentRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -115,4 +117,33 @@ public class StudentController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> patch(@RequestBody Map<String, Object> updates, @PathVariable("id") Long id) {
+        var studentToUpdate = studentRepository.findById(id);
+        if (studentToUpdate.isPresent()) {
+            Student updatedStudent = studentToUpdate.get();
+
+            if (updates.containsKey("prefect")) {
+                updatedStudent.setPrefect((boolean) updates.get("prefect"));
+            }
+            if (updates.containsKey("schoolYear")) {
+                String schoolYearName = (String) updates.get("schoolYear");
+                SchoolYear schoolYear = SchoolYear.valueOf(schoolYearName);
+                updatedStudent.setSchoolYear(schoolYear);
+            }
+
+            if (updates.containsKey("graduationYear")) {
+                int graduationYear = (int) updates.get("graduationYear");
+                updatedStudent.setGraduationYear(graduationYear);
+                updatedStudent.setGraduated(true);
+            }
+
+            studentRepository.save(updatedStudent);
+            return ResponseEntity.ok(updatedStudent);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
 }
