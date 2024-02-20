@@ -1,6 +1,6 @@
 package edu.hogwarts.studentadmin.controller;
-import edu.hogwarts.studentadmin.dto.StudentDTO;
 
+import edu.hogwarts.studentadmin.dto.StudentDTO;
 import edu.hogwarts.studentadmin.models.SchoolYear;
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.repository.StudentRepository;
@@ -26,11 +26,15 @@ public class StudentController {
         var students = this.studentRepository.findAll();
         if (!students.isEmpty()) {
             List<StudentDTO> studentDTOs = students.stream()
-                    .map(student -> new StudentDTO(
-                            student.getFirstName(),
-                            student.getMiddleName(),
-                            student.getLastName(),
-                            student.getHouse().getName()))
+                    .map(student -> {
+                        String houseName = student.getHouse() != null ? student.getHouse().getName() : null;
+                        return new StudentDTO(
+                                student.getFirstName(),
+                                student.getMiddleName(),
+                                student.getLastName(),
+                                houseName
+                        );
+                    })
                     .collect(Collectors.toList());
             return ResponseEntity.ok(studentDTOs);
         }
@@ -76,8 +80,6 @@ public class StudentController {
 
         return ResponseEntity.ok(savedStudent);
     }
-
-
 
     @PutMapping("/{id}")
     public ResponseEntity<StudentDTO> update(@RequestBody Student student, @PathVariable("id") Long id) {
@@ -144,6 +146,4 @@ public class StudentController {
         }
         return ResponseEntity.notFound().build();
     }
-
-
 }

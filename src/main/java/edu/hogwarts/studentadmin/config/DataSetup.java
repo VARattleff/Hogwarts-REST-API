@@ -32,7 +32,7 @@ public class DataSetup implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         generateHouses();
         generateStudents();
-        generetaTeacher();
+        generataTeacher();
         generateCourse();
 
     }
@@ -90,7 +90,7 @@ public class DataSetup implements ApplicationRunner {
         studentRepository.saveAll(Arrays.asList(students));
     }
 
-    public void generetaTeacher(){
+    public void generataTeacher(){
         var gryffindor = houseRepository.findById("gryffindor");
         var hufflepuff = houseRepository.findById("hufflepuff");
         var ravenclaw = houseRepository.findById("ravenclaw");
