@@ -108,10 +108,6 @@ public class Student {
         this.graduated = graduated;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public long getId() {
         return id;
     }

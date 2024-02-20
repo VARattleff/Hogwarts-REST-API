@@ -7,6 +7,7 @@ import edu.hogwarts.studentadmin.repository.StudentRepository;
 import edu.hogwarts.studentadmin.repository.TeacherRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
+@Component
 public class DataSetup implements ApplicationRunner {
     private final StudentRepository studentRepository;
     private final HouseRepository houseRepository;
