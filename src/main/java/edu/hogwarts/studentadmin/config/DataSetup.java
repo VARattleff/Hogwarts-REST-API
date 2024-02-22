@@ -32,7 +32,7 @@ public class DataSetup implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         generateHouses();
         generateStudents();
-        generataTeacher();
+        generateTeacher();
         generateCourse();
 
     }
@@ -86,12 +86,13 @@ public class DataSetup implements ApplicationRunner {
         var seamus = new Student(10L, "Seamus", "", "Finnigan", LocalDate.of(1980, 3, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
         var dean = new Student(11L, "Dean", "", "Thomas", LocalDate.of(1980, 1, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
         var parvati = new Student(12L, "Parvati", "", "Patil", LocalDate.of(1980, 1, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
+        //needed a FIFTH_YEAR student to test
         var testStudent = new Student(13L, "testStudent", "testStudent", "testStudent", LocalDate.of(1980, 1, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIFTH_YEAR);
         var students = new Student[]{harry, hermione, ron, neville, luna, draco, cedric, cho, ginny, seamus, dean, parvati, testStudent};
         studentRepository.saveAll(Arrays.asList(students));
     }
 
-    public void generataTeacher(){
+    public void generateTeacher(){
         var gryffindor = houseRepository.findById("gryffindor");
         var hufflepuff = houseRepository.findById("hufflepuff");
         var ravenclaw = houseRepository.findById("ravenclaw");

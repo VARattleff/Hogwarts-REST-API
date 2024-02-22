@@ -254,7 +254,6 @@ public class CourseController {
                     return ResponseEntity.badRequest().body("Teacher with id " + teacherId + " not found");
                 }
             }
-
             courseRepository.save(courseToUpdate);
             return ResponseEntity.ok(courseToUpdate);
         }
