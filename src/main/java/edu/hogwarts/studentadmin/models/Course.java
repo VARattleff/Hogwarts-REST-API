@@ -10,7 +10,8 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String subject;
-    private int schoolYear;
+    @Enumerated(EnumType.STRING)
+    private SchoolYear schoolYear;
     private boolean current;
     @ManyToOne(fetch = FetchType.EAGER)
     private Teacher teacher;
@@ -19,13 +20,20 @@ public class Course {
 
     public Course(){}
 
-    public Course(long id, String subject, int schoolYear, boolean current, Teacher teacher, List<Student>  students) {
-        this.id = id;
+    public Course(String subject, SchoolYear schoolYear, boolean current, Teacher teacher, List<Student> students) {
         this.subject = subject;
         this.schoolYear = schoolYear;
         this.current = current;
         this.teacher = teacher;
         this.students = students;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getSubject() {
@@ -36,11 +44,11 @@ public class Course {
         this.subject = subject;
     }
 
-    public int getSchoolYear() {
+    public SchoolYear getSchoolYear() {
         return schoolYear;
     }
 
-    public void setSchoolYear(int schoolYear) {
+    public void setSchoolYear(SchoolYear schoolYear) {
         this.schoolYear = schoolYear;
     }
 

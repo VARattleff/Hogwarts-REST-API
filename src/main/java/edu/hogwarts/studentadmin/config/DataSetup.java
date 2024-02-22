@@ -86,7 +86,8 @@ public class DataSetup implements ApplicationRunner {
         var seamus = new Student(10L, "Seamus", "", "Finnigan", LocalDate.of(1980, 3, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
         var dean = new Student(11L, "Dean", "", "Thomas", LocalDate.of(1980, 1, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
         var parvati = new Student(12L, "Parvati", "", "Patil", LocalDate.of(1980, 1, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
-        var students = new Student[]{harry, hermione, ron, neville, luna, draco, cedric, cho, ginny, seamus, dean, parvati};
+        var testStudent = new Student(13L, "testStudent", "testStudent", "testStudent", LocalDate.of(1980, 1, 1), gryffindor, false, 1991, 1998, true, SchoolYear.FIFTH_YEAR);
+        var students = new Student[]{harry, hermione, ron, neville, luna, draco, cedric, cho, ginny, seamus, dean, parvati, testStudent};
         studentRepository.saveAll(Arrays.asList(students));
     }
 
@@ -111,7 +112,7 @@ public class DataSetup implements ApplicationRunner {
         teacherRepository.saveAll(Arrays.asList(teachers));
     }
 
-    public void generateCourse(){
+    public void generateCourse() {
         var gryffindor = houseRepository.findById("gryffindor");
         var hufflepuff = houseRepository.findById("hufflepuff");
         var ravenclaw = houseRepository.findById("ravenclaw");
@@ -123,33 +124,23 @@ public class DataSetup implements ApplicationRunner {
 
         var mcGonagall = new Teacher(1L, "Minerva", "", "McGonagall", LocalDate.of(1935, 10, 4), gryffindor.get(), true, EmpType.TENURED, LocalDate.of(1956, 9, 1), null);
 
-        var harry = new Student(1L, "Harry", "James", "Potter", LocalDate.of(1980, 7, 31), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
-        var hermione = new Student(2L, "Hermione", "Jean", "Granger", LocalDate.of(1979, 9, 19), gryffindor.get(), true, 1991, 1998, true, SchoolYear.FIRST_YEAR);
-        var ron = new Student(3L, "Ronald", "Bilius", "Weasley", LocalDate.of(1980, 3, 1), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
-        var neville = new Student(4L, "Neville", "Frank", "Longbottom", LocalDate.of(1980, 7, 30), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
-        var luna = new Student(5L, "Luna", "", "Lovegood", LocalDate.of(1981, 2, 13), ravenclaw.get(), false, 1992, 1999, true, SchoolYear.FIRST_YEAR);
-        var draco = new Student(6L, "Draco", "Lucius", "Malfoy", LocalDate.of(1980, 6, 5), slytherin.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
-        var cedric = new Student(7L, "Cedric", "", "Diggory", LocalDate.of(1977, 9, 1), hufflepuff.get(), true, 1993, 1995, true, SchoolYear.FIRST_YEAR);
-        var cho = new Student(8L, "Cho", "", "Chang", LocalDate.of(1979, 9, 14), ravenclaw.get(), false, 1992, 1999, true, SchoolYear.FIRST_YEAR);
-        var ginny = new Student(9L, "Ginevra", "Molly", "Weasley", LocalDate.of(1981, 8, 11), gryffindor.get(), false, 1992, 1999, true, SchoolYear.FIRST_YEAR);
-        var seamus = new Student(10L, "Seamus", "", "Finnigan", LocalDate.of(1980, 3, 1), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR);
-
-
         teacherRepository.save(mcGonagall);
 
         List<Student> students = new ArrayList<>();
-        students.add(harry);
-        students.add(hermione);
-        students.add(ron);
-        students.add(neville);
-        students.add(luna);
-        students.add(draco);
-        students.add(cedric);
-        students.add(cho);
-        students.add(ginny);
-        students.add(seamus);
+        students.add(new Student(1L, "Harry", "James", "Potter", LocalDate.of(1980, 7, 31), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(2L, "Hermione", "Jean", "Granger", LocalDate.of(1979, 9, 19), gryffindor.get(), true, 1991, 1998, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(3L, "Ronald", "Bilius", "Weasley", LocalDate.of(1980, 3, 1), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(4L, "Neville", "Frank", "Longbottom", LocalDate.of(1980, 7, 30), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(5L, "Luna", "", "Lovegood", LocalDate.of(1981, 2, 13), ravenclaw.get(), false, 1992, 1999, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(6L, "Draco", "Lucius", "Malfoy", LocalDate.of(1980, 6, 5), slytherin.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(7L, "Cedric", "", "Diggory", LocalDate.of(1977, 9, 1), hufflepuff.get(), true, 1993, 1995, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(8L, "Cho", "", "Chang", LocalDate.of(1979, 9, 14), ravenclaw.get(), false, 1992, 1999, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(9L, "Ginevra", "Molly", "Weasley", LocalDate.of(1981, 8, 11), gryffindor.get(), false, 1992, 1999, true, SchoolYear.FIRST_YEAR));
+        students.add(new Student(10L, "Seamus", "", "Finnigan", LocalDate.of(1980, 3, 1), gryffindor.get(), false, 1991, 1998, true, SchoolYear.FIRST_YEAR));
 
-        Course course = new Course(1L, "Magical Studies", 2024, true, mcGonagall, students);
+        studentRepository.saveAll(students);
+
+        Course course = new Course("Magical Studies", SchoolYear.FIRST_YEAR, true, mcGonagall, students);
 
         courseRepository.save(course);
     }

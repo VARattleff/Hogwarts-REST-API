@@ -2,7 +2,6 @@ package edu.hogwarts.studentadmin.controller;
 
 import edu.hogwarts.studentadmin.dto.CoursesDTO;
 import edu.hogwarts.studentadmin.models.Course;
-import edu.hogwarts.studentadmin.models.SchoolYear;
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.models.Teacher;
 import edu.hogwarts.studentadmin.repository.CourseRepository;
@@ -143,18 +142,23 @@ public class CourseController {
             return ResponseEntity.notFound().build();
         }
 
-        List<Student> students = course.getStudents();
-        if (students == null) {
-            students = List.of(student);
-        } else {
-            students.add(student);
+        if (!student.getSchoolYear().equals(course.getSchoolYear())) {
+            return ResponseEntity.badRequest().body(course);
         }
 
+        List<Student> students = course.getStudents();
+        if (students == null) {
+            students = new ArrayList<>();
+        }
+
+        students.add(student);
         course.setStudents(students);
         courseRepository.save(course);
 
         return ResponseEntity.ok(course);
     }
+
+
 
     @DeleteMapping("/{id}/teacher")
     public ResponseEntity<Course> removeTeacherFromCourse(@PathVariable long id) {
