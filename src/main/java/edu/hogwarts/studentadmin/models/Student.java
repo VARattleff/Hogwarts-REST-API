@@ -38,6 +38,11 @@ public class Student {
         this.schoolYear = schoolYear;
     }
 
+
+    public Student(String studentFirstName) {
+
+    }
+
     public void setFullName(String fullName) {
         String[] parts = fullName.split(" ");
         if (parts.length > 0) {

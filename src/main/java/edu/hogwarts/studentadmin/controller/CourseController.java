@@ -1,5 +1,6 @@
 package edu.hogwarts.studentadmin.controller;
 
+import edu.hogwarts.studentadmin.dto.CoursesDTO;
 import edu.hogwarts.studentadmin.models.Course;
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.models.Teacher;
@@ -9,7 +10,9 @@ import edu.hogwarts.studentadmin.repository.TeacherRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -183,4 +186,51 @@ public class CourseController {
 
         return ResponseEntity.ok(course);
     }
+
+    @PostMapping("/{id}/students")
+    public ResponseEntity<Course> addStudentsToCourse(@PathVariable long id, @RequestBody CoursesDTO coursesDTO) {
+        Course course = courseRepository.findById(id).orElse(null);
+        if (course == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Student> students = course.getStudents();
+        if (students == null) {
+            students = new ArrayList<>();
+        }
+
+        List<Object> studentsData = coursesDTO.getStudentsData();
+
+        if (studentsData != null) {
+            for (Object data : studentsData) {
+                if (data instanceof Map) {
+                    Map<String, Object> studentMap = (Map<String, Object>) data;
+                    if (studentMap.containsKey("id")) {
+                        long studentId = ((Number) studentMap.get("id")).longValue();
+                        Student student = studentRepository.findById(studentId).orElse(null);
+                        if (student != null && !students.contains(student)) {
+                            students.add(student);
+                        }
+                    } else if (studentMap.containsKey("name")) {
+                        String studentName = (String) studentMap.get("name");
+                        Student student = studentRepository.findByFirstName(studentName);
+                        if (student == null) {
+                            student = new Student(studentName);
+                            studentRepository.save(student);
+                        }
+                        if (!students.contains(student)) {
+                            students.add(student);
+                        }
+                    }
+                }
+            }
+        }
+
+        course.setStudents(students);
+        courseRepository.save(course);
+
+        return ResponseEntity.ok(course);
+    }
+
+
 }

@@ -19,7 +19,7 @@ public class TeacherDTO {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
-        this.house = house; // Update to set house name directly
+        this.house = house;
         this.headOfHouse = headOfHouse;
         this.employment = employment;
         this.employmentStart = employmentStart;
