@@ -2,6 +2,7 @@ package edu.hogwarts.studentadmin.controller;
 
 import edu.hogwarts.studentadmin.dto.CoursesDTO;
 import edu.hogwarts.studentadmin.models.Course;
+import edu.hogwarts.studentadmin.models.SchoolYear;
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.models.Teacher;
 import edu.hogwarts.studentadmin.repository.CourseRepository;
@@ -232,5 +233,27 @@ public class CourseController {
         return ResponseEntity.ok(course);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> patch(@RequestBody Map<String, Object> updates, @PathVariable("id") Long id) {
+        var courseOptional = courseRepository.findById(id);
+        if (courseOptional.isPresent()) {
+            Course courseToUpdate = courseOptional.get();
 
+            if (updates.containsKey("teacherId")) {
+                Long teacherId = Long.parseLong(updates.get("teacherId").toString());
+                Optional<Teacher> teacherOptional = teacherRepository.findById(teacherId);
+
+                if (teacherOptional.isPresent()) {
+                    Teacher teacher = teacherOptional.get();
+                    courseToUpdate.setTeacher(teacher);
+                } else {
+                    return ResponseEntity.badRequest().body("Teacher with id " + teacherId + " not found");
+                }
+            }
+
+            courseRepository.save(courseToUpdate);
+            return ResponseEntity.ok(courseToUpdate);
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
