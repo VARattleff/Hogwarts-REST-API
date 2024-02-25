@@ -30,9 +30,12 @@ public class StudentService {
         return studentRepository.findById(id).map(this::toDto);
     }
 
+
     public StudentResponseDto save(StudentRequestDto student) {
         return toDto(studentRepository.save(toEntity(student)));
     }
+
+
 
     public void delete(Student student) {
         studentRepository.delete(student);
@@ -61,6 +64,8 @@ public class StudentService {
             return Optional.of(toDto(updatedStudent));
         }).orElse(Optional.empty());
     }
+
+
 
     public StudentResponseDto toDto(Student entity) {
         StudentResponseDto dto = new StudentResponseDto();
@@ -98,6 +103,25 @@ public class StudentService {
         return entity;
     }
 
+    public Student convertToRequestDto(StudentResponseDto responseDto) {
+        Student entity = new Student();
+        entity.setId(responseDto.getId());
+        entity.setFirstName(responseDto.getFirstName());
+        entity.setMiddleName(responseDto.getMiddleName());
+        entity.setLastName(responseDto.getLastName());
+        entity.setDateOfBirth(responseDto.getDateOfBirth());
+        entity.setPrefect(responseDto.getPrefect());
+        entity.setEnrollmentYear(responseDto.getEnrollmentYear());
+        entity.setGraduationYear(responseDto.getGraduationYear());
+        entity.setSchoolYear(responseDto.getSchoolYear());
+        entity.setGraduated(responseDto.getGraduated());
+
+        Optional<House> house = houseRepository.findById(responseDto.getHouse());
+        house.ifPresent(entity::setHouse);
+
+        return entity;
+
+    }
 
     private void updateEntity(Student entity, StudentRequestDto dto){
         if (dto.firstName() != null) entity.setFirstName(dto.firstName());
