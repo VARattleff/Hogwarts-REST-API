@@ -2,5 +2,4 @@
 - School assignment
 
 # azure
-Deployed at:
-- hogwarts-tekonologi.azurewebsites.net
+[Deployed at: hogwarts-tekonologi.azurewebsites.net](https://hogwarts-tekonologi.azurewebsites.net)
