@@ -1,2 +1,6 @@
 # Hogwarts - part 3 - REST API
-- school assignment
+- School assignment
+
+# azure
+Deployed at:
+- hogwarts-tekonologi.azurewebsites.net

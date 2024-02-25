@@ -1,6 +1,7 @@
 package edu.hogwarts.studentadmin.models;
 
 public enum SchoolYear {
+    ZERO_YEAR,
     FIRST_YEAR,
     SECOND_YEAR,
     THIRD_YEAR,

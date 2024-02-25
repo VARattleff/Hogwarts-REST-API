@@ -2,7 +2,7 @@ package edu.hogwarts.studentadmin.dto;
 
 import java.util.List;
 
-public class CoursesDTO {
+public class CourseDto {
     private List<Object> studentsData;
 
     public List<Object> getStudentsData() {
@@ -12,4 +12,5 @@ public class CoursesDTO {
     public void setStudentsData(List<Object> studentsData) {
         this.studentsData = studentsData;
     }
+
 }

@@ -1,6 +1,8 @@
 package edu.hogwarts.studentadmin.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity(name = "teacher")
@@ -14,16 +16,13 @@ public class Teacher {
     private LocalDate dateOfBirth;
     @ManyToOne(fetch = FetchType.EAGER)
     private House house;
-    private boolean headOfHouse;
+    private Boolean headOfHouse;
     @Enumerated(EnumType.STRING)
     private EmpType employment;
     private LocalDate employmentStart;
     private LocalDate employmentEnd;
 
-    public Teacher() {
-    }
-
-    public Teacher(Long id, String firstName, String middleName, String lastName, LocalDate dateOfBirth, House house, boolean headOfHouse, EmpType employment, LocalDate employmentStart, LocalDate employmentEnd) {
+    public Teacher(Long id, String firstName, String middleName, String lastName, LocalDate dateOfBirth, House house, Boolean headOfHouse, EmpType employment, LocalDate employmentStart, LocalDate employmentEnd) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -36,26 +35,34 @@ public class Teacher {
         this.employmentEnd = employmentEnd;
     }
 
+    public Teacher(){}
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @JsonIgnore
     public String getFirstName() {
         return firstName;
     }
 
+    @JsonIgnore
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-
+    @JsonIgnore
     public String getMiddleName() {
         return middleName;
     }
-
+    @JsonIgnore
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
     }
-
+    @JsonIgnore
     public String getLastName() {
         return lastName;
     }
-
+    @JsonIgnore
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -76,12 +83,16 @@ public class Teacher {
         this.house = house;
     }
 
-    public boolean isHeadOfHouse() {
+    public Boolean getHeadOfHouse() {
         return headOfHouse;
     }
 
-    public void setHeadOfHouse(boolean headOfHouse) {
+    public void setHeadOfHouse(Boolean headOfHouse) {
         this.headOfHouse = headOfHouse;
+    }
+
+    public boolean isHeadOfHouse() {
+        return headOfHouse;
     }
 
     public EmpType getEmployment() {
@@ -108,18 +119,35 @@ public class Teacher {
         this.employmentEnd = employmentEnd;
     }
 
-    public Long getId() {
-        return id;
+    public void setFullName(String fullName) {
+        int firstSpaceIndex = fullName.indexOf(" ");
+        int lastSpaceIndex = fullName.lastIndexOf(" ");
+
+        if (firstSpaceIndex != -1) {
+            firstName = fullName.substring(0, firstSpaceIndex);
+
+            if (lastSpaceIndex > firstSpaceIndex) {
+                middleName = fullName.substring(firstSpaceIndex + 1, lastSpaceIndex);
+                lastName = fullName.substring(lastSpaceIndex + 1);
+            } else {
+                lastName = fullName.substring(firstSpaceIndex + 1);
+            }
+        } else {
+            firstName = fullName;
+            middleName = null;
+            lastName = null;
+        }
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
     public String toString() {
         return "Teacher{" +
-                "firstName='" + firstName + '\'' +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
@@ -131,4 +159,3 @@ public class Teacher {
                 '}';
     }
 }
-

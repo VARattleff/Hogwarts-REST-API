@@ -1,7 +1,8 @@
 package edu.hogwarts.studentadmin.models;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,4 +58,6 @@ public class House {
                 ", colors=" + colors +
                 '}';
     }
+
+
 }

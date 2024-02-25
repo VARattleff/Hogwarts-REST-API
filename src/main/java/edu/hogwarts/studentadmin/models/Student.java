@@ -1,30 +1,30 @@
 package edu.hogwarts.studentadmin.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
-@Entity(name = "student")
+@Entity(name = "students")
 public class Student {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String firstName;
     private String middleName;
     private String lastName;
     private LocalDate dateOfBirth;
     @ManyToOne(fetch = FetchType.EAGER)
     private House house;
-    private boolean prefect;
-    private int enrollmentYear;
-    private int graduationYear;
-    private boolean graduated;
+    private Boolean prefect;
+    private Integer enrollmentYear;
+    private Integer graduationYear;
+    private Boolean graduated;
     private SchoolYear schoolYear;
 
-    public Student(){}
-
-    public Student(long id, String firstName, String middleName, String lastName, LocalDate dateOfBirth, House house, boolean prefect, int enrollmentYear, int graduationYear, boolean graduated, SchoolYear schoolYear) {
+    public Student(Long id, String firstName, String middleName, String lastName, LocalDate dateOfBirth, House house, Boolean prefect, Integer enrollmentYear, Integer graduationYear, Boolean graduated, SchoolYear schoolYear) {
         this.id = id;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -38,52 +38,50 @@ public class Student {
         this.schoolYear = schoolYear;
     }
 
-
-    public Student(String studentFirstName) {
-
+    public Student(String fullname, LocalDate dateOfBirth){
+        setFullName(fullname);
+        this.dateOfBirth = dateOfBirth;
+        this.id = getId();
     }
 
-    public void setFullName(String fullName) {
-        String[] parts = fullName.split(" ");
-        if (parts.length > 0) {
-            this.firstName = parts[0];
-        }
-        if (parts.length > 1) {
-            this.middleName = parts[1];
-        }
-        if (parts.length > 2) {
-            this.lastName = parts[2];
-        }
+    public Student(String firstName, String middleName, String lastName) {
+        this();
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
     }
 
-    public SchoolYear getSchoolYear() {
-        return schoolYear;
+    public Student(){}
+
+    public Student(String studentName) {
     }
 
-    public void setSchoolYear(SchoolYear schoolYear) {
-        this.schoolYear = schoolYear;
-    }
-
+    @JsonIgnore
     public String getFirstName() {
         return firstName;
     }
 
+    @JsonIgnore
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @JsonIgnore
     public String getMiddleName() {
         return middleName;
     }
 
+    @JsonIgnore
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
     }
 
+    @JsonIgnore
     public String getLastName() {
         return lastName;
     }
 
+    @JsonIgnore
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -96,23 +94,29 @@ public class Student {
         this.dateOfBirth = dateOfBirth;
     }
 
+
     public House getHouse() {
         return house;
     }
+
 
     public void setHouse(House house) {
         this.house = house;
     }
 
-    public boolean isPrefect() {
+    public Boolean getPrefect() {
         return prefect;
     }
 
-    public void setPrefect(boolean prefect) {
+    public Boolean isPrefect() {
+        return prefect;
+    }
+
+    public void setPrefect(Boolean prefect) {
         this.prefect = prefect;
     }
 
-    public int getEnrollmentYear() {
+    public Integer getEnrollmentYear() {
         return enrollmentYear;
     }
 
@@ -120,7 +124,7 @@ public class Student {
         this.enrollmentYear = enrollmentYear;
     }
 
-    public int getGraduationYear() {
+    public Integer getGraduationYear() {
         return graduationYear;
     }
 
@@ -128,22 +132,80 @@ public class Student {
         this.graduationYear = graduationYear;
     }
 
-    public boolean isGraduated() {
+    public Boolean getGraduated() {
         return graduated;
     }
 
-    public void setGraduated(boolean graduated) {
+    public Boolean isGraduated(){
+        return graduated;
+    }
+
+    public void setGraduated(Boolean graduated) {
         this.graduated = graduated;
     }
 
-    public long getId() {
+    public SchoolYear getSchoolYear() {
+        return schoolYear;
+    }
+
+    public void setEnrollmentYear(Integer enrollmentYear) {
+        this.enrollmentYear = enrollmentYear;
+    }
+
+    public void setGraduationYear(Integer graduationYear) {
+        this.graduationYear = graduationYear;
+    }
+
+    public void setSchoolYear(SchoolYear schoolYear) {
+        this.schoolYear = schoolYear;
+    }
+
+    @JsonGetter("name")
+    public String getFullName() {
+        if (hasMiddleName() && getMiddleName() != null) {
+            return firstName + " " + middleName + " " + lastName;
+        } else {
+            return firstName + " " + lastName;
+        }
+    }
+
+    public boolean hasMiddleName() {
+        return middleName != null;
+    }
+
+    @JsonSetter("name")
+    public void setFullName(String fullName) {
+        int firstSpaceIndex = fullName.indexOf(" ");
+        int lastSpaceIndex = fullName.lastIndexOf(" ");
+
+        if (firstSpaceIndex != -1) {
+            firstName = fullName.substring(0, firstSpaceIndex);
+
+            if (lastSpaceIndex > firstSpaceIndex) {
+                middleName = fullName.substring(firstSpaceIndex + 1, lastSpaceIndex);
+                lastName = fullName.substring(lastSpaceIndex + 1);
+            } else {
+                lastName = fullName.substring(firstSpaceIndex + 1);
+            }
+        } else {
+            firstName = fullName;
+            middleName = null;
+            lastName = null;
+        }
+    }
+
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
         return "Student{" +
-                "Id=" + id +
+                "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
                 ", lastName='" + lastName + '\'' +
@@ -153,6 +215,7 @@ public class Student {
                 ", enrollmentYear=" + enrollmentYear +
                 ", graduationYear=" + graduationYear +
                 ", graduated=" + graduated +
+                ", schoolYear=" + schoolYear +
                 '}';
     }
 }

@@ -1,6 +1,6 @@
-package edu.hogwarts.studentadmin.controller;
+package edu.hogwarts.studentadmin.controllers;
 
-import edu.hogwarts.studentadmin.dto.CoursesDTO;
+import edu.hogwarts.studentadmin.dto.CourseDto;
 import edu.hogwarts.studentadmin.models.Course;
 import edu.hogwarts.studentadmin.models.Student;
 import edu.hogwarts.studentadmin.models.Teacher;
@@ -10,10 +10,7 @@ import edu.hogwarts.studentadmin.repository.TeacherRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/courses")
@@ -40,7 +37,10 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<Course> get(@PathVariable long id) {
         var course = this.courseRepository.findById(id);
-        return course.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if(course.isPresent()) {
+            return ResponseEntity.ok(course.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -92,7 +92,6 @@ public class CourseController {
         return ResponseEntity.ok(teacher);
     }
 
-
     @GetMapping("/{id}/students")
     public ResponseEntity<List<Student>> getStudents(@PathVariable long id) {
         Optional<Course> courseOptional = courseRepository.findById(id);
@@ -108,6 +107,50 @@ public class CourseController {
         }
 
         return ResponseEntity.ok(students);
+    }
+
+    @PostMapping("/{id}/students")
+    public ResponseEntity<Course> addStudentsToCourse(@PathVariable Long id, @RequestBody CourseDto courseDto) {
+        Course course = courseRepository.findById(id).orElse(null);
+        if (course == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<Student> students = course.getStudents();
+        if (students == null) {
+            students = new ArrayList<>();
+        }
+
+        List<Object> studentsData = courseDto.getStudentsData();
+        if (studentsData != null) {
+            for (Object data : studentsData) {
+                if (data instanceof Map) {
+                    Map<String, Object> studentMap = (Map<String, Object>) data;
+                    if (studentMap.containsKey("id")) {
+                        long studentId = ((Number) studentMap.get("id")).longValue();
+                        Student student = studentRepository.findById(studentId).orElse(null);
+                        if (student != null && !students.contains(student)) {
+                            students.add(student);
+                        }
+                    } else if (studentMap.containsKey("name")) {
+                        String studentName = (String) studentMap.get("name");
+                        Student student = studentRepository.findByFirstName(studentName);
+                        if (student == null) {
+                            student = new Student(studentName);
+                            studentRepository.save(student);
+                        }
+                        if (!students.contains(student)) {
+                            students.add(student);
+                        }
+                    }
+                }
+            }
+        }
+
+        course.setStudents(students);
+        courseRepository.save(course);
+
+        return ResponseEntity.ok(course);
     }
 
     @PutMapping("/{id}/teacher/{teacherId}")
@@ -129,6 +172,53 @@ public class CourseController {
         return ResponseEntity.ok(course);
     }
 
+    @PatchMapping("/{id}/teacher/{teacherId}")
+    public ResponseEntity<Course> patchTeacherForCourse(@PathVariable long id, @PathVariable long teacherId, @RequestBody Teacher teacherToPatch){
+        Course course = courseRepository.findById(id).orElse(null);
+        if (course == null) {
+            return ResponseEntity.notFound().build();
+        }
+        var teacherToUpdate = teacherRepository.findById(teacherId);
+        if(teacherToUpdate.isPresent()) {
+            var existingTeacher = teacherToUpdate.get();
+
+            if(teacherToPatch.getFirstName() != null) {
+                existingTeacher.setFirstName(teacherToPatch.getFirstName());
+            }
+            if(teacherToPatch.getMiddleName() != null) {
+                existingTeacher.setMiddleName(teacherToPatch.getMiddleName());
+            }
+            if(teacherToPatch.getLastName() != null) {
+                existingTeacher.setLastName(teacherToPatch.getLastName());
+            }
+            if(teacherToPatch.getDateOfBirth() != null) {
+                existingTeacher.setDateOfBirth(teacherToPatch.getDateOfBirth());
+            }
+
+            existingTeacher.setHeadOfHouse(teacherToPatch.isHeadOfHouse());
+
+            if(teacherToPatch.getEmployment() != null) {
+                existingTeacher.setEmployment(teacherToPatch.getEmployment());
+            }
+            if(teacherToPatch.getEmploymentStart() != null) {
+                existingTeacher.setEmploymentStart(teacherToPatch.getEmploymentStart());
+            }
+            if(teacherToPatch.getEmploymentEnd() != null) {
+                existingTeacher.setEmploymentEnd(teacherToPatch.getEmploymentEnd());
+            }
+            if(teacherToPatch.getHouse() != null) {
+                existingTeacher.setHouse(teacherToPatch.getHouse());
+            }
+
+            teacherRepository.save(existingTeacher);
+
+            course.setTeacher(existingTeacher);
+            courseRepository.save(course);
+
+            return ResponseEntity.ok(course);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
     @PutMapping("/{id}/students/{studentId}")
     public ResponseEntity<Course> addStudentToCourse(@PathVariable long id, @PathVariable long studentId) {
@@ -142,23 +232,18 @@ public class CourseController {
             return ResponseEntity.notFound().build();
         }
 
-        if (!student.getSchoolYear().equals(course.getSchoolYear())) {
-            return ResponseEntity.badRequest().body(course);
-        }
-
         List<Student> students = course.getStudents();
         if (students == null) {
-            students = new ArrayList<>();
+            students = List.of(student);
+        } else {
+            students.add(student);
         }
 
-        students.add(student);
         course.setStudents(students);
         courseRepository.save(course);
 
         return ResponseEntity.ok(course);
     }
-
-
 
     @DeleteMapping("/{id}/teacher")
     public ResponseEntity<Course> removeTeacherFromCourse(@PathVariable long id) {
@@ -191,73 +276,4 @@ public class CourseController {
 
         return ResponseEntity.ok(course);
     }
-
-    @PostMapping("/{id}/students")
-    public ResponseEntity<Course> addStudentsToCourse(@PathVariable long id, @RequestBody CoursesDTO coursesDTO) {
-        Course course = courseRepository.findById(id).orElse(null);
-        if (course == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        List<Student> students = course.getStudents();
-        if (students == null) {
-            students = new ArrayList<>();
-        }
-
-        List<Object> studentsData = coursesDTO.getStudentsData();
-
-        if (studentsData != null) {
-            for (Object data : studentsData) {
-                if (data instanceof Map) {
-                    Map<String, Object> studentMap = (Map<String, Object>) data;
-                    if (studentMap.containsKey("id")) {
-                        long studentId = ((Number) studentMap.get("id")).longValue();
-                        Student student = studentRepository.findById(studentId).orElse(null);
-                        if (student != null && !students.contains(student)) {
-                            students.add(student);
-                        }
-                    } else if (studentMap.containsKey("name")) {
-                        String studentName = (String) studentMap.get("name");
-                        Student student = studentRepository.findByFirstName(studentName);
-                        if (student == null) {
-                            student = new Student(studentName);
-                            studentRepository.save(student);
-                        }
-                        if (!students.contains(student)) {
-                            students.add(student);
-                        }
-                    }
-                }
-            }
-        }
-
-        course.setStudents(students);
-        courseRepository.save(course);
-
-        return ResponseEntity.ok(course);
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Object> patch(@RequestBody Map<String, Object> updates, @PathVariable("id") Long id) {
-        var courseOptional = courseRepository.findById(id);
-        if (courseOptional.isPresent()) {
-            Course courseToUpdate = courseOptional.get();
-
-            if (updates.containsKey("teacherId")) {
-                Long teacherId = Long.parseLong(updates.get("teacherId").toString());
-                Optional<Teacher> teacherOptional = teacherRepository.findById(teacherId);
-
-                if (teacherOptional.isPresent()) {
-                    Teacher teacher = teacherOptional.get();
-                    courseToUpdate.setTeacher(teacher);
-                } else {
-                    return ResponseEntity.badRequest().body("Teacher with id " + teacherId + " not found");
-                }
-            }
-            courseRepository.save(courseToUpdate);
-            return ResponseEntity.ok(courseToUpdate);
-        }
-        return ResponseEntity.notFound().build();
-    }
-
 }
